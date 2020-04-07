@@ -17,17 +17,15 @@ namespace _23crbcyr.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public ActionResult<IEnumerable<Person>> Get()
+        public IActionResult Get()
         {
-            var persona = new Person()
+            IEnumerable<Person> personList;
+            using (DataDbContext db = new DataDbContext())
             {
-                rut = "1-9",
-                name = "manuel",
-                lastName = "paillafil",
-                age = 34
-            };
+                personList = db.Person.ToList();
+            }
 
-            return new Person[] { persona };
+            return Ok(personList);
         }
 
         /// <summary>
@@ -35,9 +33,21 @@ namespace _23crbcyr.Controllers
         /// una persona con :id entonces debe devolver el status 404
         /// </summary>
         [HttpGet("{id}")]
-        public ActionResult<string> Get(int id)
+        public IActionResult Get(int id)
         {
-            return "1";
+            Person person;
+            using (DataDbContext db = new DataDbContext())
+            {
+                person = db.Person.Find(id);
+            }
+
+            if (person != null)
+            {
+                return NotFound();
+            }
+
+            return Ok(person);
+
         }
 
         /// <summary>
@@ -47,8 +57,21 @@ namespace _23crbcyr.Controllers
         /// </summary>
         /// <param name="value"></param>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public IActionResult Post(Person person)
         {
+            using (DataDbContext db = new DataDbContext())
+            {
+                try
+                {
+                    db.Add(person);
+                    db.SaveChanges();
+                }
+                catch (Exception e)
+                {
+                    return BadRequest();
+                }
+            }
+            return StatusCode(201);
         }
 
         /// <summary>
@@ -58,8 +81,26 @@ namespace _23crbcyr.Controllers
         /// <param name="id"></param>
         /// <param name="value"></param>
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public IActionResult Put(int id, Person person)
         {
+            using (DataDbContext db = new DataDbContext())
+            {
+                var personObj = db.Person.Find(id);
+
+                if (person == null)
+                {
+                    return NotFound();
+                }
+
+                personObj.rut = person.rut;
+                personObj.name = person.name;
+                personObj.lastName = person.lastName;
+                personObj.age = person.age;
+
+                db.SaveChanges();
+            }
+
+            return Ok();
         }
 
         /// <summary>
@@ -68,8 +109,21 @@ namespace _23crbcyr.Controllers
         /// </summary>
         /// <param name="id"></param>
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public IActionResult Delete(int id)
         {
+            using (DataDbContext db = new DataDbContext())
+            {
+                var person = db.Person.Find(id);
+
+                if (person == null)
+                {
+                    return NotFound();
+                }
+
+                db.Person.Remove(person);
+            }
+
+            return Ok();
         }
 
     }
