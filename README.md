@@ -3,7 +3,7 @@
 
 ## Specs
 
-Simple webapp powered by .Net Core 3.1 with extras like Swagger, basic JWT integration and dockerized.
+Simple API Rest powered by .Net Core 3.1 with extras like Swagger, basic JWT integration and dockerized.
 
 - **Lang**: C#
 - **Architecture**: .Net Core 3.1 with Asp.Net Core
