@@ -24,12 +24,13 @@ namespace _23crbcyr.Entities
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
 
-            var mysqlServer = Environment.GetEnvironmentVariable("MYSQLSERVER") ?? "a";
-            var mysqlDb = Environment.GetEnvironmentVariable("MYSQLDB") ?? "b";
-            var mysqlUser = Environment.GetEnvironmentVariable("MYSQLUSER") ?? "c";
-            var mysqlPass = Environment.GetEnvironmentVariable("MYSQLPASS") ?? "d";
+            var mysqlServer = Environment.GetEnvironmentVariable("MYSQLSERVER") ?? "";
+            var mysqlDb = Environment.GetEnvironmentVariable("MYSQLDB") ?? "";
+            var mysqlUser = Environment.GetEnvironmentVariable("MYSQLUSER") ?? "";
+            var mysqlPass = Environment.GetEnvironmentVariable("MYSQLPASS") ?? "";
+            var mysqlProtocol = Environment.GetEnvironmentVariable("MYSQLPROTOCOL") ?? "";
 
-            optionsBuilder.UseMySql("Protocol=Unix;Server=" + mysqlServer + ";Database=" + mysqlDb + ";User ID=" + mysqlUser + ";Password=" + mysqlPass + ";");
+            optionsBuilder.UseMySql("Protocol="+ mysqlProtocol + ";Server=" + mysqlServer + ";Database=" + mysqlDb + ";User ID=" + mysqlUser + ";Password=" + mysqlPass + ";");
         }
 
         //Tablas de datos

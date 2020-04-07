@@ -3,6 +3,11 @@ FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-buster-slim AS base
 WORKDIR /app
 EXPOSE 80
 ENV PORT=80
+ENV MYSQLSERVER=108.59.84.74
+ENV MYSQLDB=23cebcyr
+ENV MYSQLUSER=23cebcyr
+ENV MYSQLPASS=GpuCIQkK0vKwtzLm02gS
+ENV MYSQLPROTOCOL=Socket
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
 WORKDIR /src
