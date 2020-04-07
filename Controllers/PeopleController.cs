@@ -5,6 +5,15 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using _23crbcyr.Entities;
+using System.Net.Http.Headers;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using System.Net;
+using System.Net.Http;
+using System.ComponentModel.DataAnnotations;
 
 namespace _23crbcyr.Controllers
 {
@@ -12,10 +21,14 @@ namespace _23crbcyr.Controllers
     [ApiController]
     public class PeopleController : Controller
     {
+
+       
         /// <summary>
-        /// GET /people -> devuelve la lista completa de las personas existentes
+        /// get all people in database
         /// </summary>
         /// <returns></returns>
+        [Authorize]
+        [EnableCors("AllowsAll")]
         [HttpGet]
         public IActionResult Get()
         {
@@ -26,13 +39,14 @@ namespace _23crbcyr.Controllers
             }
 
             return Ok(personList);
+
         }
 
         /// <summary>
-        /// GET /people/:id -> devuelve el curso correspondiente al id entregado. Si no existe
-        /// una persona con :id entonces debe devolver el status 404
+        /// get detail of one person
         /// </summary>
         [HttpGet("{id}")]
+        [Authorize]
         public IActionResult Get(int id)
         {
             Person person;
@@ -41,7 +55,7 @@ namespace _23crbcyr.Controllers
                 person = db.Person.Find(id);
             }
 
-            if (person != null)
+            if (person == null)
             {
                 return NotFound();
             }
@@ -51,14 +65,19 @@ namespace _23crbcyr.Controllers
         }
 
         /// <summary>
-        /// POST /people + json -> Permite crear una persona con los datos proporcionados en
-        /// el json.Devuelve status 201 si se creó exitosamente. Si los datos son inválidos
-        /// debe devolver status 400.
+        /// add person to database
         /// </summary>
         /// <param name="value"></param>
         [HttpPost]
+        [Authorize]
         public IActionResult Post(Person person)
         {
+            ICollection<ValidationResult> results;
+            if (!Helpers.Validate(person, out results))
+            {
+                return BadRequest(results.ToString());
+            }
+
             using (DataDbContext db = new DataDbContext())
             {
                 try
@@ -66,7 +85,7 @@ namespace _23crbcyr.Controllers
                     db.Add(person);
                     db.SaveChanges();
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     return BadRequest();
                 }
@@ -75,12 +94,12 @@ namespace _23crbcyr.Controllers
         }
 
         /// <summary>
-        /// PUT /people/:id + json -> Actualiza una persona con el id entregado y los campos
-        /// incluídos en el json.
+        /// update person data
         /// </summary>
         /// <param name="id"></param>
         /// <param name="value"></param>
         [HttpPut("{id}")]
+        [Authorize]
         public IActionResult Put(int id, Person person)
         {
             using (DataDbContext db = new DataDbContext())
@@ -104,11 +123,11 @@ namespace _23crbcyr.Controllers
         }
 
         /// <summary>
-        /// DELETE /people/:id -> Elimina una persona con el id entregado y devuelve status
-        /// 200. Si el curso no existe devuelve status 404.
+        /// delete person from database
         /// </summary>
         /// <param name="id"></param>
         [HttpDelete("{id}")]
+        [Authorize]
         public IActionResult Delete(int id)
         {
             using (DataDbContext db = new DataDbContext())
