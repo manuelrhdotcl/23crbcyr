@@ -29,7 +29,7 @@ namespace _23crbcyr.Entities
             var mysqlUser = Environment.GetEnvironmentVariable("MYSQLUSER") ?? "c";
             var mysqlPass = Environment.GetEnvironmentVariable("MYSQLPASS") ?? "d";
 
-            optionsBuilder.UseMySql("Server="+ mysqlServer + ";Database=" + mysqlDb + ";Uid=" + mysqlUser + ";Pwd=" + mysqlPass + ";");
+            optionsBuilder.UseMySql("Protocol=Unix;Server=" + mysqlServer + ";Database=" + mysqlDb + ";User ID=" + mysqlUser + ";Password=" + mysqlPass + ";");
         }
 
         //Tablas de datos
